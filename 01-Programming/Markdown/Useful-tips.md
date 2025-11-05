@@ -18,7 +18,7 @@ using ` ```ini`
 ```
 
 ### git output>
-Just avoid language tag
+using ` ```vbnet`
 ```vbnet
 On branch main
 Your branch is up to date with 'origin/main'.
