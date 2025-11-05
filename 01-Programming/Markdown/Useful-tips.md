@@ -3,14 +3,14 @@
 ## Some useful highlights for code blocks
 
 ### git:
-using ````bash`
+using ` ```bash`
 ```bash
 git status
 git log --oneline
 ```
 
 ### Config files:
-using ````ini`
+using ` ```ini`
 ```ini
 [user]
     name = Thiago Escalante
@@ -19,7 +19,7 @@ using ````ini`
 
 ### git output>
 Just avoid language tag
-```
+```vbnet
 On branch main
 Your branch is up to date with 'origin/main'.
 ```
