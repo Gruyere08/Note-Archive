@@ -3,8 +3,8 @@
 ## Some useful highlights for code blocks
 
 ### git:
-using ` ```bash`
-```bash
+using ` ```shell`
+```shell
 git status
 git log --oneline
 ```
