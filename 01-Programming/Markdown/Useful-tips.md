@@ -4,7 +4,7 @@
 
 ### git:
 using ` ```shell`
-```shell
+```sh
 git status
 git log --oneline
 ```
