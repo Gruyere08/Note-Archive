@@ -2,9 +2,9 @@
 
 ## Some useful highlights for code blocks
 
-### git:
-using ` ```shell`
-```git
+### console:
+using ` ```console`
+```console
 git status
 git log --oneline
 ```
