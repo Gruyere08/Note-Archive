@@ -25,10 +25,6 @@ Your branch is up to date with 'origin/main'.
 nothing to commit, working tree clean
 ```
 
----
-
-## Other useful code block highlights
-
 ### json:
 using ` ```json`
 ```json
@@ -86,23 +82,3 @@ No highlighting or special formatting.
 Good for command examples or notes.
 ```
 
----
-
-## Text formatting examples
-
-You can use **bold**, *italic*, or ***bold italic*** for emphasis.
-
-> Quoted text can be used for notes, warnings, or explanations.
-
-`Inline code` is great for showing single commands like `git push`.
-
-Use checklists for tasks:
-- [x] Learn Markdown basics  
-- [x] Create a notes repository  
-- [ ] Keep writing awesome notes!
-
----
-
-### Bonus tip
-You can also combine elements:
-> **Tip:** Use fenced code blocks with language tags to make your notes more readable and easier to scan on GitHub.
