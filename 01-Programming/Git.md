@@ -11,19 +11,19 @@
 git init
 ```
 
----
+
 
 ### Changing the initial name of repositories:
 ```console
 git config --global init.defaultBranch <Branch_Name>
-```
+
 
 It is recommended to configure the initial branch name as `main` using this command:
 ```console
 git config --global init.defaultBranch main
 ```
 
----
+
 
 ### Show useful information about the repo:
 Displays untracked files, current branch, and past commits:
@@ -31,7 +31,7 @@ Displays untracked files, current branch, and past commits:
 git status
 ```
 
----
+
 
 ### Add files to tracking:
 ```console
@@ -43,21 +43,21 @@ Add **all files** to tracking:
 git add .
 ```
 
----
+
 
 ### Create a commit with a message:
 ```console
 git commit -m 'Message'
 ```
 
----
+
 
 ### View history of commits:
 ```console
 git log
 ```
 
----
+
 
 # Restoring code
 
@@ -83,7 +83,7 @@ The **HEAD** is a pointer that references the commit you’re currently viewing.
 It usually points to the latest commit in a specific branch, but using the `git checkout` command  
 you can move the HEAD to a previous commit — this is known as a *“detached HEAD”* state.
 
----
+
 
 # Branch related commands
 
