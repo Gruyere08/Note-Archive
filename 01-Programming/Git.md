@@ -16,9 +16,10 @@ git init
 ### Changing the initial name of repositories:
 ```console
 git config --global init.defaultBranch <Branch_Name>
-
+```
 
 It is recommended to configure the initial branch name as `main` using this command:
+
 ```console
 git config --global init.defaultBranch main
 ```
