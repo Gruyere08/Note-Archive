@@ -32,6 +32,11 @@ Local branches can have an Upstream branch in the remote repository. The Upstrea
 git branch -vv
 ```
 
+### Setting the upstream branch without pushing
+```
+git branch --set-upstream-to=origin/<remote_branch>
+```
+
 ### Cloning a remote repository
 To clone a remote repository, use the following command
 ```
@@ -61,4 +66,14 @@ git checkout <Branch_name>
 For older versions, the explicit method is used
 ```
 git checkout -b <Branch name> origin/<Branch_to_track>
+```
+
+### Pulling latests changes of a branch
+Explicit way:
+```
+git pull <remote-name> <branch-name>
+```
+If the branch already has an **Upstream** branch set, then:
+```
+git pull
 ```

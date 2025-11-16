@@ -4,9 +4,29 @@
 
 ---
 
+### Create a new branch:
+```console
+git branch <branch_name>
+```
+**The newly created branch will inherit the code of the branch you're currently on at the moment of creating the new branch**
+
+### Explicit version of the last command, to create branches based on a specific branch:
+```console
+git branch <branch_name> <source_branch>
+```
+
 ### Move to a branch:
 ```console
 git checkout <branch_name>
+```
+
+### Create a branch and move to it:
+```console
+git checkout -b <branch_name>
+```
+or
+```console
+git switch -c <branch_name>
 ```
 
 ---
