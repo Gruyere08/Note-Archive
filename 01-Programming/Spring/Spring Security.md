@@ -51,6 +51,13 @@ public class User {
 }
 ```
 
+| Method          | Conceptual Purpose                            |
+| --------------- | --------------------------------------------- |
+| `getUsername()` | Returns login identity used by authentication |
+| `getPassword()` | Returns encrypted password for verification   |
+| `getRole()`     | Defines authorization permissions             |
+
+
 ## User Repository
 
 ```java
@@ -68,6 +75,11 @@ public interface UserRepository extends JpaRepository<User, Long> {
     Optional<User> findByUsername(String username);
 }
 ```
+
+| Method             | Conceptual Purpose                         |
+| ------------------ | ------------------------------------------ |
+| `findByUsername()` | Finds user during login and JWT validation |
+
 
 ## UserDetailsImpl
 
@@ -121,6 +133,7 @@ public class UserDetailsImpl implements UserDetails {
 }
 ```
 
+
 ## CustomUserDetailsService
 
 ```java
@@ -156,6 +169,11 @@ public class CustomUserDetailsService implements UserDetailsService {
     }
 }
 ```
+
+| Method                 | Conceptual Purpose                             |
+| ---------------------- | ---------------------------------------------- |
+| `loadUserByUsername()` | Spring calls this to retrieve user credentials |
+
 
 ## JwtService
 
