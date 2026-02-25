@@ -6,8 +6,8 @@ These are the classes needed to implement a simple Spring security setup
 
 1. User: Doesn't interact with Spring security, it's just part of the model
 2. UserRepository: Brings Users from the database
-3. UserDetailsImpl: Adapter between your `User` entity and Spring Security. Implements the `UserDetails` interface
-4. CustomUserDetailsService: Tells Spring how to load users. Connects Spring security with database. Implements the `UserDetailsService` interface
+3. SecurityUser: Adapter between your `User` entity and Spring Security. Implements the `UserDetails` interface
+4. DatabaseUserDetailsService: Tells Spring how to load users. Connects Spring security with database. Implements the `UserDetailsService` interface
 5. JwtService: Handles JWT creation and validation. 
 6. JwtAuthFilter: Security checkpoint executed on every request. Authenticates requests using JWT.
 7. SecurityConfig: Defines security rules and filter behavior. Central configuration of Spring Security.
@@ -62,6 +62,7 @@ public enum Role {
 
 ```java
 // JpaRepository is PROVIDED by Spring Data JPA
+@Repository
 public interface UserRepository extends JpaRepository<User, Long> {
 
     // Spring automatically generates query:
@@ -74,41 +75,35 @@ public interface UserRepository extends JpaRepository<User, Long> {
 | ------------------ | ------------------------------------------ |
 | `findByUsername()` | Finds user during login and JWT validation |
 
-
-## UserDetailsImpl
+## SecurityUser
 
 ```java
-// We IMPLEMENT Spring's UserDetails interface
-public class UserDetailsImpl implements UserDetails {
+public class SecurityUser implements UserDetails {
 
     private final User user;
 
-    // constructor receives your entity
-    public UserDetailsImpl(User user) {
+    public SecurityUser(User user) {
         this.user = user;
     }
 
-    // Spring uses this to check permissions
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         return List.of(
-            new SimpleGrantedAuthority(user.getRole())
+                new SimpleGrantedAuthority(user.getRole().name())
         );
     }
 
-    // password used during authentication comparison
     @Override
     public String getPassword() {
         return user.getPassword();
     }
 
-    // login identifier
     @Override
     public String getUsername() {
         return user.getUsername();
     }
 
-    // Account checks (you can keep true for now)
+    // account flags (enable later if needed)
     @Override public boolean isAccountNonExpired() { return true; }
     @Override public boolean isAccountNonLocked() { return true; }
     @Override public boolean isCredentialsNonExpired() { return true; }
@@ -117,30 +112,24 @@ public class UserDetailsImpl implements UserDetails {
 ```
 
 
-## CustomUserDetailsService
+## DatabaseUserDetailsService
 
 ```java
 @Service
-public class CustomUserDetailsService implements UserDetailsService {
+@RequiredArgsConstructor
+public class DatabaseUserDetailsService implements UserDetailsService {
 
     private final UserRepository repository;
 
-    public CustomUserDetailsService(UserRepository repository) {
-        this.repository = repository;
-    }
-
-    // SPRING CALLS THIS METHOD AUTOMATICALLY
     @Override
     public UserDetails loadUserByUsername(String username)
             throws UsernameNotFoundException {
 
-        // find user in database
         User user = repository.findByUsername(username)
                 .orElseThrow(() ->
                         new UsernameNotFoundException("User not found"));
 
-        // convert to Spring Security format
-        return new UserDetailsImpl(user);
+        return new SecurityUser(user);
     }
 }
 ```
