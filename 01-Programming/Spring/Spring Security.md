@@ -16,10 +16,6 @@ These are the classes needed to implement a simple Spring security setup
 ## User Entity
 
 ```java
-package com.example.security.entity;
-
-import jakarta.persistence.*;
-
 @Entity // JPA annotation → maps class to database table
 public class User {
 
@@ -61,12 +57,6 @@ public class User {
 ## User Repository
 
 ```java
-package com.example.security.repository;
-
-import org.springframework.data.jpa.repository.JpaRepository;
-import java.util.Optional;
-import com.example.security.entity.User;
-
 // JpaRepository is PROVIDED by Spring Data JPA
 public interface UserRepository extends JpaRepository<User, Long> {
 
@@ -84,17 +74,6 @@ public interface UserRepository extends JpaRepository<User, Long> {
 ## UserDetailsImpl
 
 ```java
-package com.example.security.security;
-
-import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.authority.SimpleGrantedAuthority;
-
-import com.example.security.entity.User;
-
-import java.util.Collection;
-import java.util.List;
-
 // We IMPLEMENT Spring's UserDetails interface
 public class UserDetailsImpl implements UserDetails {
 
@@ -137,14 +116,6 @@ public class UserDetailsImpl implements UserDetails {
 ## CustomUserDetailsService
 
 ```java
-package com.example.security.security;
-
-import org.springframework.security.core.userdetails.*;
-import org.springframework.stereotype.Service;
-
-import com.example.security.repository.UserRepository;
-import com.example.security.entity.User;
-
 @Service
 public class CustomUserDetailsService implements UserDetailsService {
 
@@ -178,16 +149,6 @@ public class CustomUserDetailsService implements UserDetailsService {
 ## JwtService
 
 ```java
-package com.example.security.security;
-
-import io.jsonwebtoken.*;
-import io.jsonwebtoken.security.Keys;
-import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.stereotype.Service;
-
-import java.security.Key;
-import java.util.Date;
-
 @Service
 public class JwtService {
 
@@ -229,18 +190,6 @@ public class JwtService {
 ## JwtAuthFilter
 
 ```java
-package com.example.security.security;
-
-import jakarta.servlet.*;
-import jakarta.servlet.http.*;
-import org.springframework.stereotype.Component;
-import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.web.filter.OncePerRequestFilter;
-import org.springframework.security.core.userdetails.UserDetails;
-
-import java.io.IOException;
-
 @Component
 public class JwtAuthFilter extends OncePerRequestFilter {
 
@@ -299,17 +248,6 @@ public class JwtAuthFilter extends OncePerRequestFilter {
 ## SecurityConfig
 
 ```java
-package com.example.security.config;
-
-import org.springframework.context.annotation.*;
-import org.springframework.security.config.annotation.web.builders.HttpSecurity;
-import org.springframework.security.web.SecurityFilterChain;
-import org.springframework.security.config.http.SessionCreationPolicy;
-import org.springframework.security.crypto.password.*;
-import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
-
-import com.example.security.security.JwtAuthFilter;
-
 @Configuration
 public class SecurityConfig {
 
@@ -358,15 +296,6 @@ public class SecurityConfig {
 ## AuthController
 
 ```java
-package com.example.security.controller;
-
-import org.springframework.web.bind.annotation.*;
-import org.springframework.security.authentication.*;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.userdetails.UserDetails;
-
-import com.example.security.security.JwtService;
-
 @RestController
 @RequestMapping("/auth")
 public class AuthController {
