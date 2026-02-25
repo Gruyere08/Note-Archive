@@ -16,34 +16,38 @@ These are the classes needed to implement a simple Spring security setup
 ## User Entity
 
 ```java
-@Entity // JPA annotation → maps class to database table
+@Entity
+@Table(name = "users")
+@Getter
+@Setter
+@NoArgsConstructor
+@AllArgsConstructor
+@Builder
 public class User {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    // username used to login
+    @Column(nullable = false, unique = true)
     private String username;
 
-    // IMPORTANT: this must store HASHED password
+    // must contain HASHED password
+    @Column(nullable = false)
     private String password;
 
-    // simple role system (ROLE_USER, ROLE_ADMIN)
-    private String role;
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
+    private Role role;
+}
+```
 
-    // ----- Getters and Setters -----
+Code for the enum:
 
-    public Long getId() { return id; }
-
-    public String getUsername() { return username; }
-    public void setUsername(String username) { this.username = username; }
-
-    public String getPassword() { return password; }
-    public void setPassword(String password) { this.password = password; }
-
-    public String getRole() { return role; }
-    public void setRole(String role) { this.role = role; }
+```java
+public enum Role {
+    ROLE_USER,
+    ROLE_ADMIN
 }
 ```
 
