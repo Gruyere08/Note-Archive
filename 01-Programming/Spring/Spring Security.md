@@ -143,39 +143,52 @@ public class DatabaseUserDetailsService implements UserDetailsService {
 
 ```java
 @Service
+@RequiredArgsConstructor
 public class JwtService {
 
-    // secret key used to sign tokens
-    private final String SECRET =
-            "my-super-secret-key-my-super-secret-key";
+    @Value("${security.jwt.secret}")
+    private String secret;
 
-    // creates signing key object
+    @Value("${security.jwt.expiration}")
+    private long expiration;
+
     private Key getSigningKey() {
-        return Keys.hmacShaKeyFor(SECRET.getBytes());
+        return Keys.hmacShaKeyFor(secret.getBytes());
     }
 
-    // generates token after login
-    public String generateToken(UserDetails user) {
-
-        return Jwts.builder()
-                .setSubject(user.getUsername()) // identity
-                .setIssuedAt(new Date())
-                .setExpiration(
-                        new Date(System.currentTimeMillis() + 86400000)
-                ) // 24h expiration
-                .signWith(getSigningKey())
-                .compact();
-    }
-
-    // extract username from token
-    public String extractUsername(String token) {
-
+    private Claims extractAllClaims(String token) {
         return Jwts.parserBuilder()
                 .setSigningKey(getSigningKey())
                 .build()
                 .parseClaimsJws(token)
-                .getBody()
-                .getSubject();
+                .getBody();
+    }
+
+    public String extractUsername(String token) {
+        return extractAllClaims(token).getSubject();
+    }
+
+    public String generateToken(UserDetails user) {
+        return Jwts.builder()
+                .setSubject(user.getUsername())
+                .setIssuedAt(new Date())
+                .setExpiration(
+                        new Date(System.currentTimeMillis() + expiration)
+                )
+                .signWith(getSigningKey())
+                .compact();
+    }
+
+    public boolean isTokenValid(String token, UserDetails user) {
+        String username = extractUsername(token);
+        return username.equals(user.getUsername())
+                && !isTokenExpired(token);
+    }
+
+    private boolean isTokenExpired(String token) {
+        return extractAllClaims(token)
+                .getExpiration()
+                .before(new Date());
     }
 }
 ```
@@ -184,18 +197,12 @@ public class JwtService {
 
 ```java
 @Component
+@RequiredArgsConstructor
 public class JwtAuthFilter extends OncePerRequestFilter {
 
     private final JwtService jwtService;
-    private final CustomUserDetailsService userService;
+    private final DatabaseUserDetailsService userService;
 
-    public JwtAuthFilter(JwtService jwtService,
-                         CustomUserDetailsService userService) {
-        this.jwtService = jwtService;
-        this.userService = userService;
-    }
-
-    // SPRING EXECUTES THIS AUTOMATICALLY FOR EACH REQUEST
     @Override
     protected void doFilterInternal(
             HttpServletRequest request,
@@ -203,36 +210,48 @@ public class JwtAuthFilter extends OncePerRequestFilter {
             FilterChain filterChain)
             throws ServletException, IOException {
 
-        // read Authorization header
-        String header = request.getHeader("Authorization");
+        final String header = request.getHeader("Authorization");
 
-        if (header != null && header.startsWith("Bearer ")) {
-
-            // remove "Bearer "
-            String token = header.substring(7);
-
-            // extract username from JWT
-            String username = jwtService.extractUsername(token);
-
-            // load user from DB
-            UserDetails user =
-                    userService.loadUserByUsername(username);
-
-            // create authentication object
-            UsernamePasswordAuthenticationToken auth =
-                    new UsernamePasswordAuthenticationToken(
-                            user,
-                            null,
-                            user.getAuthorities()
-                    );
-
-            // store authentication globally for this request
-            SecurityContextHolder
-                    .getContext()
-                    .setAuthentication(auth);
+        if (header == null || !header.startsWith("Bearer ")) {
+            filterChain.doFilter(request, response);
+            return;
         }
 
-        // continue request execution
+        String token = header.substring(7);
+
+        try {
+            String username = jwtService.extractUsername(token);
+
+            // avoid re-authentication
+            if (username != null &&
+                SecurityContextHolder.getContext().getAuthentication() == null) {
+
+                UserDetails user =
+                        userService.loadUserByUsername(username);
+
+                if (jwtService.isTokenValid(token, user)) {
+
+                    UsernamePasswordAuthenticationToken auth =
+                            new UsernamePasswordAuthenticationToken(
+                                    user,
+                                    null,
+                                    user.getAuthorities()
+                            );
+
+                    auth.setDetails(
+                            new WebAuthenticationDetailsSource()
+                                    .buildDetails(request)
+                    );
+
+                    SecurityContextHolder.getContext()
+                            .setAuthentication(auth);
+                }
+            }
+
+        } catch (Exception ignored) {
+            // invalid JWT → continue without authentication
+        }
+
         filterChain.doFilter(request, response);
     }
 }
