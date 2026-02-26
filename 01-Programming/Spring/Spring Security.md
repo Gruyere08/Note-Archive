@@ -11,7 +11,8 @@ These are the classes needed to implement a simple Spring security setup
 5. JwtService: Handles JWT creation and validation. 
 6. JwtAuthFilter: Security checkpoint executed on every request. Authenticates requests using JWT.
 7. SecurityConfig: Defines security rules and filter behavior. Central configuration of Spring Security.
-8. AuthController: Entry point for authentication. Handles login requests.
+8. AuthService: Manages the logic of authentication.
+9. AuthController: Entry point for authentication. Handles login requests.
 
 ## User Entity
 
@@ -261,40 +262,49 @@ public class JwtAuthFilter extends OncePerRequestFilter {
 
 ```java
 @Configuration
+@RequiredArgsConstructor
 public class SecurityConfig {
 
     private final JwtAuthFilter jwtFilter;
 
-    public SecurityConfig(JwtAuthFilter jwtFilter) {
-        this.jwtFilter = jwtFilter;
-    }
-
-    // password hashing bean
+    // password hashing
     @Bean
     public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
     }
 
-    // MAIN SECURITY CONFIGURATION
+    // authentication manager (used during login)
+    @Bean
+    public AuthenticationManager authenticationManager(
+            AuthenticationConfiguration config) throws Exception {
+        return config.getAuthenticationManager();
+    }
+
+    // MAIN SECURITY CONFIG
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http)
             throws Exception {
 
         return http
-                .csrf(csrf -> csrf.disable()) // disable CSRF for APIs
+                // REST API → disable CSRF
+                .csrf(csrf -> csrf.disable())
 
-                // no server sessions → JWT only
+                // no sessions (JWT authentication)
                 .sessionManagement(session ->
                         session.sessionCreationPolicy(
                                 SessionCreationPolicy.STATELESS))
 
-                // endpoint rules
+                // disable default login page
+                .formLogin(form -> form.disable())
+                .httpBasic(basic -> basic.disable())
+
+                // authorization rules
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/auth/**").permitAll()
                         .anyRequest().authenticated()
                 )
 
-                // register our JWT filter
+                // register JWT filter BEFORE Spring login filter
                 .addFilterBefore(
                         jwtFilter,
                         UsernamePasswordAuthenticationFilter.class
@@ -305,27 +315,18 @@ public class SecurityConfig {
 }
 ```
 
-## AuthController
+## AuthService
 
 ```java
-@RestController
-@RequestMapping("/auth")
-public class AuthController {
+@Service
+@RequiredArgsConstructor
+public class AuthService {
 
     private final AuthenticationManager authenticationManager;
     private final JwtService jwtService;
 
-    public AuthController(AuthenticationManager authenticationManager,
-                          JwtService jwtService) {
-        this.authenticationManager = authenticationManager;
-        this.jwtService = jwtService;
-    }
+    public String login(LoginRequest request) {
 
-    // LOGIN ENDPOINT
-    @PostMapping("/login")
-    public String login(@RequestBody LoginRequest request) {
-
-        // Spring validates username + password automatically
         Authentication authentication =
                 authenticationManager.authenticate(
                         new UsernamePasswordAuthenticationToken(
@@ -334,12 +335,42 @@ public class AuthController {
                         )
                 );
 
-        // retrieve authenticated user
         UserDetails user =
                 (UserDetails) authentication.getPrincipal();
 
-        // generate token
         return jwtService.generateToken(user);
     }
+}
+```
+
+## AuthController
+
+```java
+@RestController
+@RequestMapping("/auth")
+@RequiredArgsConstructor
+public class AuthController {
+
+    private final AuthService authService;
+
+    @PostMapping("/login")
+    public String login(@RequestBody LoginRequest request) {
+        return authService.login(request);
+    }
+}
+```
+
+It's a good practice giving back the token in the form of a DTO:
+
+```java
+public record AuthResponse(String token) {}
+```
+
+Endpoint using the DTO:
+
+```java
+@PostMapping("/login")
+public AuthResponse login(@RequestBody LoginRequest request) {
+    return new AuthResponse(authService.login(request));
 }
 ```
