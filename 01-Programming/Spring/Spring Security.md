@@ -387,3 +387,32 @@ public record LoginRequest(
         String password
 ) {}
 ```
+
+## Recommended project structure
+
+com.example.app
+│
+├── config
+│     └── SecurityConfig
+│
+├── security
+│     ├── JwtAuthFilter
+│     ├── JwtService
+│     ├── SecurityUser
+│     └── DatabaseUserDetailsService
+│
+├── service
+│     └── AuthService
+│
+├── controller
+│     └── AuthController
+│
+├── repository
+│     └── UserRepository
+│
+├── entity
+│     └── User
+│
+└── dto
+      ├── LoginRequest
+      └── AuthResponse
