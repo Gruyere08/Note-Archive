@@ -374,3 +374,16 @@ public AuthResponse login(@RequestBody LoginRequest request) {
     return new AuthResponse(authService.login(request));
 }
 ```
+
+## DTOs
+
+```java
+public record AuthResponse(String token) {}
+```
+
+```java
+public record LoginRequest(
+        String username,
+        String password
+) {}
+```
