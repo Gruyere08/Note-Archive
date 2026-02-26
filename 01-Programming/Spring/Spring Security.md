@@ -390,6 +390,7 @@ public record LoginRequest(
 
 ## Recommended project structure
 
+```
 com.example.app
 │
 ├── config
@@ -416,3 +417,4 @@ com.example.app
 └── dto
       ├── LoginRequest
       └── AuthResponse
+```
