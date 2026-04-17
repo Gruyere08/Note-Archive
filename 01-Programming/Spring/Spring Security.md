@@ -8,7 +8,7 @@ These are the classes needed to implement a simple Spring security setup
 2. UserRepository: Brings Users from the database
 3. SecurityUser: Adapter between your `User` entity and Spring Security. Implements the `UserDetails` interface
 4. DatabaseUserDetailsService: Tells Spring how to load users. Connects Spring security with database. Implements the `UserDetailsService` interface
-5. JwtService: Handles JWT creation and validation. 
+5. JwtService: Handles JWT creation and validation.
 6. JwtAuthFilter: Security checkpoint executed on every request. Authenticates requests using JWT.
 7. SecurityConfig: Defines security rules and filter behavior. Central configuration of Spring Security.
 8. AuthService: Manages the logic of authentication.
@@ -57,7 +57,6 @@ public enum Role {
 | `getUsername()` | Returns login identity used by authentication |
 | `getPassword()` | Returns encrypted password for verification   |
 | `getRole()`     | Defines authorization permissions             |
-
 
 ## User Repository
 
@@ -112,7 +111,6 @@ public class SecurityUser implements UserDetails {
 }
 ```
 
-
 ## DatabaseUserDetailsService
 
 ```java
@@ -138,7 +136,6 @@ public class DatabaseUserDetailsService implements UserDetailsService {
 | Method                 | Conceptual Purpose                             |
 | ---------------------- | ---------------------------------------------- |
 | `loadUserByUsername()` | Spring calls this to retrieve user credentials |
-
 
 ## JwtService
 
@@ -390,7 +387,7 @@ public record LoginRequest(
 
 ## Recommended project structure
 
-```
+```txt
 com.example.app
 │
 ├── config
