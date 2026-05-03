@@ -26,3 +26,32 @@ The first thing I did was plan a strategy to construct this API in most efficien
 12. **Dockerize the application:** Create a docker file. Build JAR. Run app inside container
 13. **Final polish:** Clean package structure. Consistent naming. Remove unused code. Add README.
 
+## Chapter 2: Git pipeline
+
+I will be using a git structure that resembles a professional workflow, with a `develop` branch, a `main` branch and feature branches.
+
+### Initial setup
+
+1. Created empty folder
+2. Initialized Repo
+3. Added remote origin
+4. Commited and pushed initial commit
+5. Added Spring project
+6. Created develop branch
+7. Commited and pushed the project into develop
+8. Commited initial configurations
+9. Setup Package structure and database
+10. Pused changes
+
+### List of features to be implemented
+
+- domain-layer
+- service-layer
+- get-endpoints
+- write-endpoints
+- exception-handling
+- validation
+- security-jwt
+- unit-tests
+- swagger
+- docker
