@@ -59,3 +59,9 @@ This test is divided in four sections:
 - Act: The main action is executed
 - Assert: We assert that the result given by the class is the same we expected
 - Verify: verifies that the respository class was called correctly
+
+### Important distinction between AssertSame and AssertEquals
+
+These are two methods used in the assert portion of a test, but they behave differently.
+**AssertSame**: It only passes if the two given objects are the exact same in memory. It's used to test identity.
+**AssertEquals**: It doesn't care about identity, it's used to test equality between values.
