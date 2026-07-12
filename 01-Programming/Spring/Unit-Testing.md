@@ -47,5 +47,15 @@ Test methods are annotated with @Test and are named after the expected behavior,
         assertEquals(2, resultado.size());
         assertEquals("Barcelona", resultado.get(0).getNombre());
         assertEquals("Liverpool", resultado.get(1).getNombre());
+
+        // Verifies the repository was called correctly
+        verify(repository).findAll();
     }
 ```
+
+This test is divided in four sections:
+
+- Arrange: In this phase you prepare the object or collection of objects that your mock repository will return
+- Act: The main action is executed
+- Assert: We assert that the result given by the class is the same we expected
+- Verify: verifies that the respository class was called correctly
