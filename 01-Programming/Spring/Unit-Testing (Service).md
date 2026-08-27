@@ -65,3 +65,36 @@ This test is divided in four sections:
 These are two methods used in the assert portion of a test, but they behave differently.
 **AssertSame**: It only passes if the two given objects are the exact same in memory. It's used to test identity.
 **AssertEquals**: It doesn't care about identity, it's used to test equality between values.
+
+### Testing getById 
+
+```java
+@Test
+    void shouldReturnEquipoWhenIdExists(){
+
+        Long id = 1L;
+        //Arrange
+        Equipo equipo = new Equipo(
+                id, "Barcelona", "La liga", "España");
+        when(repository.findById(id)).thenReturn(Optional.of(equipo));
+
+        //Act
+        Equipo resultado = service.getById(id);
+
+        //Assert
+        assertSame(equipo, resultado);
+
+        //Verify
+        verify(repository).findById(id);
+
+
+    }
+```
+
+assertSame is being used to test that the returned object is in fact the same object in memory
+
+### Testing getById exception
+
+The method getById from our Service has to possible paths: one where the operation succeeds, and one where it fails and throws an exception.
+For this second path we will make a second test to verify that the exception is being thrown correctly.
+
