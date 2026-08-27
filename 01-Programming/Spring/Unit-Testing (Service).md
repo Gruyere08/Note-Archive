@@ -98,3 +98,60 @@ assertSame is being used to test that the returned object is in fact the same ob
 The method getById from our Service has to possible paths: one where the operation succeeds, and one where it fails and throws an exception.
 For this second path we will make a second test to verify that the exception is being thrown correctly.
 
+```java
+@Test
+    void shouldThrowExceptionWhenIdDoesNotExist(){
+        Long id = 1L;
+        when(repository.findById(id)).thenReturn(Optional.empty());
+        //Assert (The method is expected to throw an exception before it can return a value, so the Act is performed inside assertThrows().)
+        assertThrows(EquipoNotFoundException.class, ()-> service.getById(id));
+        //verify (optional in this case)
+        verify(repository).findById(id);
+
+    }
+```
+There's no act phase in this type of test since the method is expected to throw an exception, so doing an act phase and calling the method on its own, would make the test throw an exception and fail, so the act phase occurs inside the assertThrows.
+
+### Testing searchByNombre
+
+```java
+@Test
+    void shouldReturnEquiposMatchingName(){
+        //Arrange
+        String name = "Barcelona";
+        List<Equipo> equipos = List.of(new Equipo(1L,name,"La liga","España"));
+        when(repository.findAllByNombreContainingIgnoreCase(name)).thenReturn(equipos);
+        //act
+        List<Equipo> resultado = service.searchByNombre(name);
+        //Assert
+
+        assertSame(equipos, resultado);
+
+        verify(repository).findAllByNombreContainingIgnoreCase(name);
+    }
+```
+
+### Testing save
+
+```java
+@Test
+    void shouldSaveEquipoAndReturnTheSavedEquipo(){
+        //Arrange
+        Equipo equipo = new Equipo(null, "Barcelona", "La liga", "España");
+        Equipo saved = new Equipo(1L, "Barcelona", "La liga", "España");
+
+        when(repository.save(equipo)).thenReturn(saved);
+
+        //Act
+        Equipo result = service.save(equipo);
+
+        //Assert
+        assertSame(saved, result);
+
+        //verify
+        verify(repository).save(equipo);
+    }
+```
+
+The logic changes a little bit in saving methods, since we have to create a "saved" object that simulates the object we expect to receive and then a normal object that goes through the process. Once it's done we assert that we did indeed get the object we expected.
+
