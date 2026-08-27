@@ -155,3 +155,41 @@ There's no act phase in this type of test since the method is expected to throw 
 
 The logic changes a little bit in saving methods, since we have to create a "saved" object that simulates the object we expect to receive and then a normal object that goes through the process. Once it's done we assert that we did indeed get the object we expected.
 
+### Testing delete
+
+```java
+@Test
+    void shouldDeleteEquipoWithTheSpecifiedId(){
+        Long id = 1L;
+        //Arrange
+        Equipo equipo = new Equipo(id, "Barcelona", "La liga", "España");
+        when(repository.findById(id)).thenReturn(Optional.of(equipo));
+        doNothing().when(repository).delete(equipo);
+        //act
+        service.deleteById(id);
+        //verify
+        verify(repository).findById(id);
+        verify(repository).delete(equipo);
+
+    }
+```
+
+In methods that don't return anything, it is not necessary to use the doNothing method, since the mock repository will that that anyway, but it does give more clarity. Also, since the delete() method calls for another service method inside it, we have to program both mock methods with their respective return values and also verify that they were both called at the end.
+
+### Testing delete exception
+
+```java
+@Test
+    void shouldThrowExceptionWhenDeletingNonExistingEquipo(){
+        Long id = 1L;
+        //Arrange
+        when(repository.findById(id)).thenReturn(Optional.empty());
+        //Assert/Act
+        assertThrows(EquipoNotFoundException.class, ()-> service.deleteById(id));
+        //verify
+        verify(repository).findById(id);
+        verify(repository, never()).delete(any());
+    }
+```
+
+This case ends up being a hybrid of previous cases. Since our delete method calls for getById before it can delete, then this method should throw an exception if it doesn't find an Equipo of that id. The important part is that the method should throw an exception before it ever calls delete, so at the end we should test that the delete method from the repository was indeed never called.
