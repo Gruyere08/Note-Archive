@@ -15,3 +15,18 @@ Allow the access to the following URLs without authentication in your security c
 
 ## Step 3: See if it's working properly
 Access the following endpoint to see if the site boots or not: `/swagger-ui.html`
+
+## Setting up a simple global configuration class
+To do this we first label the class as a `@configuration` class and then we use the `@OpenAPIDefinition` with the following syntax
+```java
+@Configuration
+@OpenAPIDefinition(
+        info = @Info(
+                title = "Equipo API",
+                version = "1.0",
+                description = "REST API for managing football teams"
+        )
+)
+public class OpenApiConfig {
+}
+```
