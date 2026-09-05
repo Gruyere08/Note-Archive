@@ -41,9 +41,23 @@ To document a controller we use the `@Tag` annotation on the controller itself
 ```
 
 ## Documenting a specific end point
+To document Endpoints we use the following annotation on the endpoint itself
 ```java
 @Operation(
             summary = "Get all teams",
             description = "Returns all teams available"
     )
+```
+We can also document specific responses using the following syntax
+```java
+@ApiResponses({
+        @ApiResponse(
+                responseCode = "200",
+                description = "Team found"
+        ),
+        @ApiResponse(
+                responseCode = "404",
+                description = "Team not found"
+        )
+})
 ```
