@@ -12,3 +12,6 @@ Allow the access to the following URLs without authentication in your security c
     "/v3/api-docs/**"
 ).permitAll()
 ```
+
+## Step 3: See if it's working properly
+Access the following endpoint to see if the site boots or not: `/swagger-ui.html`
