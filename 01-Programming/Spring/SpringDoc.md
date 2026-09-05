@@ -30,3 +30,20 @@ To do this we first label the class as a `@configuration` class and then we use 
 public class OpenApiConfig {
 }
 ```
+
+## Documenting a Controller
+To document a controller we use the `@Tag` annotation on the controller itself
+```java
+@Tag(
+        name = "Equipos",
+        description = "Operations related to football teams"
+)
+```
+
+## Documenting a specific end point
+```java
+@Operation(
+            summary = "Get all teams",
+            description = "Returns all teams available"
+    )
+```
