@@ -61,3 +61,27 @@ We can also document specific responses using the following syntax
         )
 })
 ```
+or
+```java
+@ApiResponse(
+            responseCode = "200",
+            description = "Teams successfully retrieved"
+    )
+```
+for a single response
+
+#### Documenting a path parameter
+We use the following syntax
+```java
+@Parameter(description = "Unique identifier of the team")
+```
+But this annotation has to be applied to the path parameter itself in the following way
+```java
+@GetMapping("/{id}")
+public Equipo getById(
+        @Parameter(description = "Unique identifier of the team")
+        @PathVariable Long id
+) {
+    return equipoService.getById(id);
+}
+```
