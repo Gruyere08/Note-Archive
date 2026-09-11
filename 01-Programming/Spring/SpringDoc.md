@@ -85,3 +85,17 @@ public Equipo getById(
     return equipoService.getById(id);
 }
 ```
+
+#### Documenting a request body
+There are various ways to do this, but the cleaner option is using this syntax inside the `@Operation` annotation
+```java
+@Operation(
+            summary = "Updates a team",
+            description = "Updates an existing team with new information",
+            requestBody = @io.swagger.v3.oas.annotations.parameters.RequestBody(
+                    description = "New information to update the designated team",
+                    required = true
+            )
+    )
+```
+The `@RequestBody` annotation from swagger is named the same as the annotation from Spring, that's why we have to use the full name of the annotation here.
