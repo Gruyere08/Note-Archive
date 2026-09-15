@@ -99,3 +99,34 @@ There are various ways to do this, but the cleaner option is using this syntax i
     )
 ```
 The `@RequestBody` annotation from swagger is named the same as the annotation from Spring, that's why we have to use the full name of the annotation here.
+
+## Configuring security and authentication
+
+### Update the OpenApiConfig with this new annotation
+```java
+@SecurityScheme(
+        name = "bearer-key",
+        type = SecuritySchemeType.HTTP,
+        scheme = "bearer",
+        bearerFormat = "JWT"
+)
+```
+This is to specify the type of security that we're using and "bearer-key" is an alias that we will use later
+
+### Tell Swagger which methods use this type of authentication
+To specify a type of authentication on a method basis, we use the following syntax inside the `@Operation` annotation
+
+```java
+@Operation(
+        summary = "Get a team by ID",
+        description = "Returns the team associated with the specified ID",
+        security = {
+                @SecurityRequirement(name = "bearer-key")
+        }
+)
+```
+However, if all the methods in our controller use the same type of authentication, then we can do this at a controller level:
+```java
+@SecurityRequirement(name = "bearer-key")
+```
+
